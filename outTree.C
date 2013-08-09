@@ -1,10 +1,12 @@
 #define outTree_cxx
 #include "outTree.h"
 #include <TH2.h>
-#include "TH1F.h"
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
+#include "TH1F.h"
+#include <math.h>
+
 void outTree::Loop()
 {
 //   In a ROOT session, you can do:
@@ -30,47 +32,49 @@ void outTree::Loop()
 // METHOD2: replace line
 //    fChain->GetEntry(jentry);       //read all branches
 //by  b_branchname->GetEntry(ientry); //read only this branch
-   if (fChain == 0) return;
+  TH1F* h = new TH1F("h", "muon spectrum", 1000, .0, 18.5);
+  TH1F* h1 = new TH1F("h1", "Pulse Output1", 2499, -2.68000004411e-08, 2.31600001399e-08);
+  TH1F* h2 = new TH1F("h2", "Pulse Output2", 2499, -2.68000004411e-08, 2.31600001399e-08);
+  TH1F* h3 = new TH1F("h3", "Pulse Output3", 2499, -2.68000004411e-08, 2.31600001399e-08);
+  float min2 = 1.0;
+  std::cout.precision(16);
+  
 
-   TH1F* h = new TH1F("h", "muon spectrum", 1000, .0, .5);
-   TH1F* h1 = new TH1F("h1", "Pulse Output1", 2499, -2.68000004411e-08, 2.31600001399e-08);
-   TH1F* h2 = new TH1F("h2", "Pulse Output2", 2499, -2.68000004411e-08, 2.31600001399e-08);
-   TH1F* h3 = new TH1F("h3", "Pulse Output3", 2499, -2.68000004411e-08, 2.31600001399e-08);
-   float min2 = 1.0;
-   
+  if (fChain == 0) return;
+
    Long64_t nentries = fChain->GetEntriesFast();
-
    Long64_t nbytes = 0, nb = 0;
-   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+   for (Long64_t jentry = 1; jentry < nentries; jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // if (Cut(ientry) < 0) continue;
-      //std::cout << "entry: " << jentry << std::endl;
-      
-float min = 1.0;
-    min2 = 1.0;
-    int size = Time->size();
-    //std::cout << "vector size: " << Amp->size() << " Time: " << Time->at(0) << " " << Time->at(1) << " " << Time->at(2) << " " << Time->at(size-1) << std::endl;
-    //std::cout << "time stamp: " << ptime << std::endl;
-    for(int j = 0; j < Amp->size(); j++){
-      if(jentry = 1)h1->Fill(Time->at(j),Amp->at(j));
-      if(jentry = 109)h2->Fill(Time->at(j),Amp->at(j));
-      if(jentry = 267)h3->Fill(Time->at(j),Amp->at(j));
-      if(Amp->at(j) < min2){
-	min2 = Amp->at(j);
+      if(jentry < 2000){ 
+	//std::cout << "entry: " << jentry << std::endl;
+	//std::cout << "vector size: " << Time->size() << " Time: " << Time->at(0) << " " << Time->at(1) << " " << Time->at(2) << " " << Time->at(Time->size()-1) << std::endl;	
       }
-    }
-    
-    h->Fill(TMath::Abs(min2));
+      
+      int ctr = 0;
+      for (std::vector<float>::iterator it = Time->begin() ; it != Time->end(); ++it){
+	//if(ctr == 0 || ctr == Time->size() -1)std::cout << ' ' << *it << std::endl;
+	ctr++;
+      }
+      int ctr1 = 0;
+      min2 = 1.0;
+      for (std::vector<float>::iterator it1 = Amp->begin() ; it1 != Amp->end(); ++it1){
+	//if(ctr1 == 0 || ctr1 == Amp->size() -1)std::cout << ' ' << *it1 << std::endl;
+	ctr1++;
+	if(*it1 < min2){
+	  min2 = *it1;
+	}
+      }
+
+      h->Fill(fabs(min2));
+      if(min2 < 1.0)std::cout << "min2: " << min2 << std::endl;
+      
    }
-   
-   h1->Draw();
-   TFile* f1 = new TFile("test.root","RECREATE");
+
+   TFile* fout = new TFile("file_out.root", "recreate");
    h->Write();
-   h1->Write();
-   h2->Write();
-   h3->Write();
-   f1->Close();
-   
+   fout->Close();
 }
