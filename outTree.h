@@ -51,9 +51,13 @@ outTree::outTree(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/media/data/cmorgoth/scope_data/data_Scope_Total.root");
-      if (!f || !f->IsOpen()) {
-         f = new TFile("/media/data/cmorgoth/scope_data/data_Scope_Total.root");
+     //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/media/data/cmorgoth/scope_data/data_Scope_Total.root");
+     //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/home/cmorgoth/No_crystal_Data/NoCrystalData.root");
+     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/home/cmorgoth/CrystalData/CrystalData.root");
+     if (!f || !f->IsOpen()) {
+       //f = new TFile("/media/data/cmorgoth/scope_data/data_Scope_Total.root");
+       //f = new TFile("/home/cmorgoth/No_crystal_Data/NoCrystalData.root");
+       f = new TFile("/home/cmorgoth/CrystalData/CrystalData.root");
       }
       f->GetObject("outTree",tree);
 
