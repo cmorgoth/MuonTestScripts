@@ -19,7 +19,7 @@ CPPFLAGS += -g
 
 TARGET = Spec
 
-SRC = test.cc outTree.C
+SRC = test.cc outTree_Fitting_NewScope.C
 
 #TARGET = bkg_pre_1mu
 #SRC = bkg_pre_1mu.cc src/DM_1DRatio.cc src/DM_2DRatio.cc src/DM_Base.cc
