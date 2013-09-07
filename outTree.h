@@ -56,14 +56,16 @@ outTree::outTree(TTree *tree) : fChain(0)
      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/home/cmorgoth/CrystalData/CrystalData.root");
      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/SmallCrystal.root");
      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/RiseTimeData/TotalRiseTime.root");
-     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/NewScope/Tot_newScope.root");
+     //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/NewScope/Tot_newScope.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/NewScope/NewScope_9_2_2013/CorrectScale_NewScope.root");
      if (!f || !f->IsOpen()) {
        //f = new TFile("/media/data/cmorgoth/scope_data/data_Scope_Total.root");
        //f = new TFile("/home/cmorgoth/No_crystal_Data/NoCrystalData.root");
        //f = new TFile("/home/cmorgoth/CrystalData/CrystalData.root");
        //f = new TFile("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/SmallCrystal.root");
        //f = new TFile("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/RiseTimeData/TotalRiseTime.root");
-       f = new TFile("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/NewScope/Tot_newScope.root");
+       //f = new TFile("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/NewScope/Tot_newScope.root");
+       f = new TFile("/media/data/cmorgoth/Data/ScopeData_SmallCrystal/NewScope/NewScope_9_2_2013/CorrectScale_NewScope.root");
       }
       f->GetObject("outTree",tree);
 

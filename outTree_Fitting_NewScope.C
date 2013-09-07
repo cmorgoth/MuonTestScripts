@@ -59,6 +59,12 @@ void outTree::Loop()
   TH1F* h12 = new TH1F("h12", "Diff", 200, 10*1e-09, 150*1e-9);
   TH2F* h11 = new TH2F("h11", "Decay time vs Half Time Max", 200, 15*1e-09, 28*1e-9, 200, 10*1e-09, 150*1e-9);
   
+  TH1F* h20 = new TH1F("h20", "p0", 200, .1*1e-9, 90*1e-9);
+  TH1F* h21 = new TH1F("h21", "p1", 200, .1*1e-9, 90*1e-9);
+  TH1F* h22 = new TH1F("h22", "p2", 200, .1*1e-09, 28*1e-9);
+  TH1F* h23 = new TH1F("h23", "p2", 200, 10*1e-09, 150*1e-9);
+  
+
   float min2 = 1.0;
   std::cout.precision(16);
   
@@ -127,13 +133,19 @@ void outTree::Loop()
 
     f4 = new TF1("f4", "[3]*( 1+TMath::Erf((1/sqrt(2))*((x-[0])/[1] -[1]/[2])) )*TMath::Exp(-( (x-[0])/[2] - [1]*[1]/(2*[2]*[2])))", 0.0000000175, 0.0000003);
   
-  //[0]->t0,[1]->s, [2]->tau, [3]-> Amplitude
+    //[0]->t0,[1]->s, [2]->tau, [3]-> Amplitude
     f4->SetParameter(0,0.00000003);
     f4->SetParameter(1,.00000001);
     f4->SetParameter(2,0.00000001);
     f4->SetParameter(3,30.0);
-    //h1->Fit(f4,"VMWLR");
+    h1->Fit(f4,"VMWLR");
+
+    h20->Fill(f4->GetParameter(0));
+    h21->Fill(f4->GetParameter(1));
+    h22->Fill(f4->GetParameter(2));
+    h23->Fill(f4->GetParameter(3));
     
+
     //delete h1;
     delete f1;
     delete f2;
@@ -155,5 +167,9 @@ void outTree::Loop()
   h11->Write();
   h12->Write();
   h1->Write();
+  h20->Write();
+  h21->Write();
+  h22->Write();
+  h23->Write();
   fout->Close();
 }
