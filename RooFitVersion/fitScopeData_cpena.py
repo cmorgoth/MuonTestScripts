@@ -10,11 +10,37 @@ if __name__ == '__main__':
     rt.gROOT.ProcessLine(".L RooSine.cc+")
     rt.gSystem.Load("RooSine_cc.so")
 
+    rt.gROOT.ProcessLine(".L PieceWisePulse.cc+")
+    rt.gSystem.Load("PieceWisePulse_cc.so")
+    
+    rt.gROOT.ProcessLine(".L PieceWisePulse2.cc+")
+    rt.gSystem.Load("PieceWisePulse2_cc.so")
+
     workspace = rt.RooWorkspace("pulse")
     workspace.factory('W[1,-INF,+INF]')
     W = workspace.var("W")
     amp = rt.RooRealVar("amp","amp",-10,10)
     time = rt.RooRealVar("time","time",-15,240)
+
+
+    #PieceWise
+    M = rt.RooRealVar("M", "#m", 2, 0.0, 1000)
+    B = rt.RooRealVar("B", "#b", 1, -2.0, 1000)
+    Mu = rt.RooRealVar("Mu", "#mu", 8.0, 0.01, 1000)
+    Sigma = rt.RooRealVar("Sigma", "#sigma", 4.1, 0.01, 1000)
+    Lambda = rt.RooRealVar("Lambda", "#lambda", 0.015, 0.001, 1000)
+    Piece = rt.RooPieceWisePulse("Piece", "try", time, M, B, Mu, Sigma, Lambda)
+
+    #PieceWise
+    M2 = rt.RooRealVar("M2", "#m2", 4, 0.0, 1000)
+    B2 = rt.RooRealVar("B2", "#b2", 1, -2.0, 1000)
+    Mu2 = rt.RooRealVar("Mu2", "#mu2", 32.0, 0.01, 1000)
+    Sigma2 = rt.RooRealVar("Sigma2", "#sigma2", 16.1, 0.01, 1000)
+    Lambda2 = rt.RooRealVar("Lambda2", "#lambda2", 0.015, 0.001, 1000)
+    X0 = rt.RooRealVar("X0","shift", 0.5, -50, 50)
+    Piece2 = rt.RooPieceWisePulse2("Piece2", "try2", time, M2, B2, Mu2, Sigma2, Lambda2, X0)
+
+    X0.setConstant(True)
 
     #High Frequency Component
     Ome = rt.RooRealVar("Omega", "Ang. Freq", 950*1.E06, 5*1.E06, 10000*1.E06)
@@ -96,20 +122,23 @@ if __name__ == '__main__':
     data = rt.RooDataSet(data.GetName(),data.GetTitle(),data,data.get(),"",W.GetName()) 
     data.Print("V")
 
-    time.setRange("lowTime",-20,25.0)
+    time.setRange("lowTime",0,25.0)
     #time.setRange("highTime",40,250)
     time.setRange("highTime",25.0,250)
     
     
-    fr = model_Lan2exp.fitTo(data,rt.RooFit.Save(),rt.RooFit.SumW2Error(False),rt.RooFit.Range("lowTime,highTime"))
+    #fr = model_cph.fitTo(data,rt.RooFit.Save(),rt.RooFit.SumW2Error(False),rt.RooFit.Range("lowTime,highTime"))
+    fr = Piece2.fitTo(data,rt.RooFit.Save(),rt.RooFit.SumW2Error(False),rt.RooFit.Range("lowTime,highTime"))
     fr.Print("v")
     c = rt.TCanvas("c","c",500,500)
     frame = time.frame()
     data.plotOn(frame,rt.RooFit.Binning(data.numEntries()),rt.RooFit.DataError(rt.RooAbsData.None),rt.RooFit.MarkerStyle(8),rt.RooFit.MarkerSize(0.5))
-    model_Lan2exp.plotOn(frame)
-    exp.plotOn(frame,rt.RooFit.LineColor(rt.kRed))
-    exp2.plotOn(frame,rt.RooFit.LineColor(rt.kViolet))
-    Landau.plotOn(frame,rt.RooFit.LineColor(rt.kGreen))
+    #model_cph.plotOn(frame)
+    Piece.plotOn(frame)
+    Piece2.plotOn(frame)
+    #exp.plotOn(frame,rt.RooFit.LineColor(rt.kRed))
+    #exp2.plotOn(frame,rt.RooFit.LineColor(rt.kViolet))
+    #Landau.plotOn(frame,rt.RooFit.LineColor(rt.kGreen))
     #exp.plotOn(frame,rt.RooFit.LineColor(rt.kRed),rt.RooFit.Normalization(0.5))
     #exp2.plotOn(frame,rt.RooFit.LineColor(rt.kViolet),rt.RooFit.Normalization(0.5))
     #Ngaus.plotOn(frame,rt.RooFit.LineColor(rt.kGreen),rt.RooFit.Normalization(0.05))
